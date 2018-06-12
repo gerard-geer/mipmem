@@ -511,8 +511,8 @@ mipmem_dlloc:
 		
 		# Increment our address.
 		addi $t0, $t0, 8
-	j  mipmem_done_searching_for_ref_to_dealloc
-	mipmem_done_searching_for_zero_ref:
+	j  mipmem_searching_for_ref_to_dealloc
+	mipmem_done_searching_for_ref_to_dealloc:
 	
 	# TODO: Should we mipmem_defrag every time?
 	jr $ra
