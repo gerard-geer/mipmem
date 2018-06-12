@@ -473,7 +473,7 @@ mipmem_alloc:
 # Function: mipmem_alloc
 # Frees memory.
 # Parameters:
-#	$a0: Variable name to free. 
+#	$a0: Variable address to free. 
 # Returns:
 #	1 if successful, 0 if not.
 #------------------------------------------------------------------------------
@@ -496,22 +496,22 @@ mipmem_dlloc:
 	li $t2, 0  # The return flag.
 	
 	# Now we have to go find this darn reference.
-	mipmem_searching_for_zero_ref:
-	bge $t0, $t1, mipmem_done_searching_for_zero_ref
+	mipmem_searching_for_ref_to_dealloc:
+	bge $t0, $t1, mipmem_done_searching_for_ref_to_dealloc
 		
-		# Get the name of the current reference.
-		lw $t3, ($t0)
+		# Get the address of the current reference.
+		lw $t3, 4($t0) # It's great how that 4 is all we neeed to switch to addr hunting.
 		
 		# If it's the reference we're looking for, we
 		# set it's name to 0x0000, and the mipmem_defrag will take care of the
 		# rest when it's called.
-		bne $a0, $t3, thisisnottherefwearelookingfor
+		bne $a0, $t3, this_is_not_the_ref_we_are_looking_for
 			 sw $zero, ($t0)
-		thisisnottherefwearelookingfor:
+		this_is_not_the_ref_we_are_looking_for:
 		
 		# Increment our address.
 		addi $t0, $t0, 8
-	j  mipmem_searching_for_zero_ref
+	j  mipmem_done_searching_for_ref_to_dealloc
 	mipmem_done_searching_for_zero_ref:
 	
 	# TODO: Should we mipmem_defrag every time?
